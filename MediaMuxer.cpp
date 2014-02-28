@@ -103,6 +103,7 @@ int MediaMuxer::open(const char * filename, const AVFormatContext * fmt_ctx, boo
 
         if (mOutFmt->flags & AVFMT_GLOBALHEADER)
             out_st->codec->flags |= CODEC_FLAG_GLOBAL_HEADER;
+        avcodec_open2(out_st->codec, out_st->codec->codec, NULL);
     }
 
     if (show)
@@ -139,7 +140,7 @@ int MediaMuxer::open(const char * filename, const AVFormatContext * fmt_ctx, boo
     return 0;
 }
 
-int MediaMuxer::write(uint8_t ** data, int size, AVMediaType type)
+int MediaMuxer::write(const uint8_t ** data, int size, AVMediaType type)
 {
     // synchronization of video and audio is needed
     if (type == AVMEDIA_TYPE_AUDIO) {
@@ -151,15 +152,32 @@ int MediaMuxer::write(uint8_t ** data, int size, AVMediaType type)
     return 0;
 }
 
-int MediaMuxer::writeAudio(uint8_t ** data, int size)
+int MediaMuxer::writeAudio(const uint8_t ** data, int size)
 {
+    AVPacket pkt;
+
+    mAudioEncoder->encode(&pkt, data, size);
+
+    int ret = av_interleaved_write_frame(mFmtCtx, &pkt);
+    if (ret < 0) {
+        av_log(NULL, AV_LOG_ERROR, "write audio frame failed.\n");
+        return ret;
+    }
 
     return 0;
 }
 
-int MediaMuxer::writeVideo(uint8_t ** data, int size)
+int MediaMuxer::writeVideo(const uint8_t ** data, int size)
 {
 
+    AVPacket pkt;
+
+    mVideoEncoder->encode(&pkt, data, size);
+    int ret = av_interleaved_write_frame(mFmtCtx, &pkt);
+    if (ret < 0) {
+        av_log(NULL, AV_LOG_ERROR, "write video frame failed.\n");
+        return ret;
+    }
     return 0;
 }
 
@@ -215,6 +233,8 @@ int MediaMuxer::write(AVPacket * pkt, AVRational time_base, AVMediaType type)
 
 void MediaMuxer::close()
 {
+    av_write_trailer(mFmtCtx);
+
     if (mFmtCtx && !(mFmtCtx->flags & AVFMT_NOFILE))
         avio_close(mFmtCtx->pb);
     avformat_free_context(mFmtCtx);

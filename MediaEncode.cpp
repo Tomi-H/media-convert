@@ -20,6 +20,13 @@ MediaEncode::~MediaEncode()
 
 }
 
+int MediaEncode::isOpen()
+{
+    if (mCodec)
+        return avcodec_is_open(mCodecCtx);
+    return 0;
+}
+
 uint64_t MediaEncode::checkChannelLayout(uint64_t channel_layout)
 {
 

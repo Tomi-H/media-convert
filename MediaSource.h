@@ -8,6 +8,8 @@
 #ifndef MEDIASOURCE_H_
 #define MEDIASOURCE_H_
 #include "ffmpeg.h"
+#include "AudioResample.h"
+#include "VideoScale.h"
 
 class MediaSource
 {
@@ -47,12 +49,20 @@ class MediaSource
         AVSampleFormat getSampleFormat();
         int getSampleRate();
 
+        uint64_t setChannelLayout(uint64_t channel_layout);
+        AVSampleFormat setSampleFormat(AVSampleFormat sample_fmt);
+        int setSampleRate(int sample_rate);
+
         /**
          *    For Video
          */
         int getWidth();
         int getHeight();
         AVPixelFormat getPixFormat();
+
+        int setWidth(int width);
+        int setHeight(int height);
+        AVPixelFormat setPixFormat(AVPixelFormat pix_fmt);
 
 
     private:
@@ -65,6 +75,8 @@ class MediaSource
         AVCodecContext * mAudioCodecCtx;
         AVCodec * mVideoCodec;
         AVCodec * mAudioCodec;
+        AudioResample * mResample;
+        VideoScale * mScale;
 };
 
 #endif /* MEDIASOURCE_H_ */

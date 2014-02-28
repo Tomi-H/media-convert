@@ -13,7 +13,7 @@ class MediaMuxer
 
         int open(const char * filename, bool show = false);
         int open(const char * filename, const AVFormatContext * fmt_ctx, bool show = false);
-        int write(uint8_t ** data, int size, AVMediaType type);
+        int write(const uint8_t ** data, int size, AVMediaType type);
         int write(AVPacket * pkt, AVRational time_base, AVMediaType type);
         void close();
 
@@ -35,9 +35,9 @@ class MediaMuxer
         AVPixelFormat getPixFmt();
 
     private:
-        int writeAudio(uint8_t ** data, int size);
+        int writeAudio(const uint8_t ** data, int size);
         int writeAudio(AVPacket * pkt, AVRational time_base);
-        int writeVideo(uint8_t ** data, int size);
+        int writeVideo(const uint8_t ** data, int size);
         int writeVideo(AVPacket * pkt, AVRational time_base);
 
     private:

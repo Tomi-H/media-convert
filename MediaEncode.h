@@ -17,6 +17,8 @@ class MediaEncode
 
         virtual int open(AVCodecID codec_id, int flags) = 0;
 
+        virtual int isOpen();
+
         /**
          * Encode the data into packet
          * @param pkt_ptr the AVPacket used to store the encoded data

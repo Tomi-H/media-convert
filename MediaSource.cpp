@@ -19,6 +19,8 @@ MediaSource::MediaSource()
     mVideoCodec = NULL;
     mVideoStreamIndex = -1;
     mAudioStreamIndex = -1;
+    mResample = NULL;
+    mScale = NULL;
 }
 
 MediaSource::~MediaSource()
@@ -192,6 +194,24 @@ int MediaSource::getSampleRate()
     if (mAudioCodecCtx)
         return mAudioCodecCtx->sample_rate;
     return 0;
+}
+
+uint64_t MediaSource::setChannelLayout(uint64_t channel_layout)
+{
+
+    return mChannelLayout;
+}
+
+AVSampleFormat MediaSource::setSampleFormat(AVSampleFormat sample_fmt)
+{
+
+    return mSampleFmt;
+}
+
+int MediaSource::setSampleRate(int sample_rate)
+{
+
+    return mSampleRate;
 }
 
 /**

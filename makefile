@@ -1,4 +1,4 @@
-TARGET = testMediaSource
+TARGET = testMuxer
 
 LIBS += -lavcodec -lavformat -lavutil -lswresample -lswscale -lm
 
