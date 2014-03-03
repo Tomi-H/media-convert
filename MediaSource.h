@@ -49,9 +49,9 @@ class MediaSource
         AVSampleFormat getSampleFormat();
         int getSampleRate();
 
-        uint64_t setChannelLayout(uint64_t channel_layout);
-        AVSampleFormat setSampleFormat(AVSampleFormat sample_fmt);
-        int setSampleRate(int sample_rate);
+        void setChannelLayout(uint64_t channel_layout);
+        void setSampleFormat(AVSampleFormat sample_fmt);
+        void setSampleRate(int sample_rate);
 
         /**
          *    For Video
@@ -60,9 +60,9 @@ class MediaSource
         int getHeight();
         AVPixelFormat getPixFormat();
 
-        int setWidth(int width);
-        int setHeight(int height);
-        AVPixelFormat setPixFormat(AVPixelFormat pix_fmt);
+        void setWidth(int width);
+        void setHeight(int height);
+        void setPixFormat(AVPixelFormat pix_fmt);
 
 
     private:
@@ -77,6 +77,14 @@ class MediaSource
         AVCodec * mAudioCodec;
         AudioResample * mResample;
         VideoScale * mScale;
+
+        uint64_t mOutChannelLayout;
+        AVSampleFormat mOutSampleFmt;
+        int mOutSampleRate;
+
+        int mOutWidth;
+        int mOutHeight;
+        AVPixelFormat mOutPixFmt;
 };
 
 #endif /* MEDIASOURCE_H_ */

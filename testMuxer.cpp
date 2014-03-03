@@ -9,16 +9,26 @@ int main(int argc, char ** argv)
     }
 
     av_register_all();
-    MediaSource ms;
-    ms.open(argv[1], 0);
 
+    MediaSource ms;
     MediaMuxer muxer;
+
+    ms.open(argv[1], 0);
     muxer.open(argv[2], ms.getFmtCtx(), true);
 
     AVPacket pkt;
+    AVFrame * frame = NULL;
 
     while (!ms.read(&pkt)) {
         AVMediaType type = ms.getMediaType(&pkt);
+        int ret = ms.decode(frame, &pkt);
+        if (ret < 0) {
+            fprintf(stderr, "decode error.\n");
+            exit(1);
+        }
+
+        if (ret == 0)
+            continue;
 
         switch(type) {
             case AVMEDIA_TYPE_AUDIO:

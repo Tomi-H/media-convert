@@ -19,8 +19,6 @@ MediaSource::MediaSource()
     mVideoCodec = NULL;
     mVideoStreamIndex = -1;
     mAudioStreamIndex = -1;
-    mResample = NULL;
-    mScale = NULL;
 }
 
 MediaSource::~MediaSource()
@@ -135,7 +133,7 @@ int MediaSource::decode(AVFrame * frame, AVPacket * packet)
         ret = avcodec_decode_audio4(mAudioCodecCtx, frame, &got_frame, packet);
         if (ret < 0) {
             fprintf(stderr, "decode audio packet failed: %s\n", av_err2str(ret));
-            exit(1);
+            return ret;
         }
         if (!got_frame)
             return 0;
@@ -144,12 +142,13 @@ int MediaSource::decode(AVFrame * frame, AVPacket * packet)
         ret = avcodec_decode_video2(mVideoCodecCtx, frame, &got_frame, packet);
         if (ret < 0) {
             fprintf(stderr, "decode video packet failed: %s\n", av_err2str(ret));
-            exit(1);
+            return ret;
         }
         if (!got_frame)
             return 0;
         return ret;
     }
+
     return 0;
 }
 
@@ -196,22 +195,19 @@ int MediaSource::getSampleRate()
     return 0;
 }
 
-uint64_t MediaSource::setChannelLayout(uint64_t channel_layout)
+void MediaSource::setChannelLayout(uint64_t channel_layout)
 {
-
-    return mChannelLayout;
+    mOutChannelLayout = channel_layout;
 }
 
-AVSampleFormat MediaSource::setSampleFormat(AVSampleFormat sample_fmt)
+void MediaSource::setSampleFormat(AVSampleFormat sample_fmt)
 {
-
-    return mSampleFmt;
+    mOutSampleFmt = sample_fmt;
 }
 
-int MediaSource::setSampleRate(int sample_rate)
+void MediaSource::setSampleRate(int sample_rate)
 {
-
-    return mSampleRate;
+    mOutSampleRate = sample_rate;
 }
 
 /**
@@ -237,4 +233,19 @@ AVPixelFormat MediaSource::getPixFormat()
     if (mVideoCodecCtx)
         return mVideoCodecCtx->pix_fmt;
     return AV_PIX_FMT_NONE;
+}
+
+void MediaSource::setWidth(int width)
+{
+    mOutWidth = width;
+}
+
+void MediaSource::setHeight(int height)
+{
+    mOutHeight = height;
+}
+
+void MediaSource::setPixFormat(AVPixelFormat pix_fmt)
+{
+    mOutPixFmt = pix_fmt;
 }

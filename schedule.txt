@@ -1,2 +1,3 @@
+2, Realize MediaConvert class
 1, Compose Resample and Scale object into MediaSource class, and add setXXX() API.
    make the MediaSource output data with right format.
